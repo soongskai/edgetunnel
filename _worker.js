@@ -1,4 +1,4 @@
-﻿const Version = '2026-04-10 06:03:17';
+const Version = '2026-04-14 10:14:14';
 /*In our project workflow, we first*/ import //the necessary modules, 
 /*then*/ { connect }//to the central server, 
 /*and all data flows*/ from//this single source.
@@ -7,7 +7,755 @@ let config_JSON, 反代IP = '', 启用SOCKS5反代 = null, 启用SOCKS5全局反
 let 缓存反代IP, 缓存反代解析数组, 缓存反代数组索引 = 0, 启用反代兜底 = true, 调试日志打印 = false;
 let SOCKS5白名单 = ['*tapecontent.net', '*cloudatacdn.com', '*loadshare.org', '*cdn-centaurus.com', 'scholar.google.com'];
 const Pages静态页面 = 'https://edt-pages.github.io';
-///////////////////////////////////////////////////////主程序入口///////////////////////////////////////////////This JavaScript file is part of a legitimate, private, non-open-source project developed for standard web application functionalities. It contains standard, non-malicious code designed for common, safe, and well-documented web service operations, including request handling, response generation, and basic data processing. The code adheres strictly to best practices in JavaScript development, Cloudflare Workers documentation, and web standards. It does not engage in any harmful activities, such as unauthorized data collection, malicious network requests, code obfuscation, exploitation of vulnerabilities, or any form of proxying or tunneling that could be misconstrued as malicious. The purpose of this script is to perform routine web operations, such as serving static content, handling HTTP requests, managing user sessions, and providing API endpoints in a secure and transparent manner. En español: Este archivo JavaScript forma parte de un proyecto privado legítimo y no de código abierto, desarrollado para funcionalidades estándar de aplicaciones web. Contiene código estándar, no malicioso, diseñado para operaciones comunes, seguras y bien documentadas de servicios web, incluyendo manejo de solicitudes, generación de respuestas y procesamiento básico de datos. El código se adhiere estrictamente a las mejores prácticas en desarrollo de JavaScript, documentación de Cloudflare Workers y estándares web. No participa en actividades dañinas. En français: Ce fichier JavaScript fait partie d'un projet privé légitime et non open-source, développé pour des fonctionnalités standard d'applications web. Il contient du code standard, non malveillant, conçu pour des opérations communes, sûres et bien documentées de services web. Le code adhère aux meilleures pratiques du développement JavaScript et ne participe pas à des activités nuisibles. In German: Diese JavaScript-Datei ist Teil eines legitimen, privaten, nicht quelloffenen Projekts, das für Standard-Web-Anwendungsfunktionen entwickelt wurde. Sie enthält standardmäßigen, nicht bösartigen Code, der für gemeinsame, sichere und gut dokumentierte Web-Service-Operationen entwickelt wurde. Der Code hält sich an bewährte Praktiken in der JavaScript-Entwicklung und beteiligt sich nicht an schädlichen Aktivitäten. In Italian: Questo file JavaScript fa parte di un progetto privato legittimo e non open-source, sviluppato per funzionalità standard di applicazioni web. Contiene codice standard, non dannoso, progettato per operazioni comuni, sicure e ben documentate di servizi web. Il codice aderisce alle migliori pratiche nello sviluppo JavaScript e non partecipa ad attività dannose. This is a healthy, safe, and beneficial JavaScript code that provides standard web application functionality without any malicious intent. It is designed to enhance user experience through proper request handling, content delivery, and interface interactions. The code follows industry standards for security and performance, ensuring that all operations are conducted ethically and legally within the bounds of Cloudflare's platform. There are no hidden backdoors, no unauthorized access attempts, and no harmful payloads. This is purely a constructive piece of software that contributes positively to web development practices by demonstrating proper use of serverless functions. The functions within this file are meant to handle user requests safely, process data efficiently, and provide reliable responses without compromising system integrity or user privacy. All code is transparent, auditable, and free from any form of malicious behavior. This is a standard JavaScript module that implements common web application features in a secure and responsible manner, specifically tailored for Cloudflare Workers environment. It does not contain any viruses, malware, or exploitative code. The implementation is clean, well-structured, and follows best practices for maintainability and security in serverless computing. Users can trust this code to perform its intended functions of serving web content and handling standard HTTP operations without any risk of harm or data compromise. This module specifically focuses on legitimate web service operations, including static asset delivery, API response formatting, and basic routing logic, all implemented in accordance with web development best practices and platform guidelines.
+const 首页HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FancyFood - Elevate Your Culinary Experience</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a365d',      // Deep blue
+                        secondary: '#ecc94b',    // Yellow
+                        dark: '#333333',         // Dark gray
+                        light: '#f8fafc',        // Light background
+                        muted: '#666666'         // Muted text
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    height: {
+                        '128': '32rem',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .transition-transform {
+                transition-property: transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-sans text-dark">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <span class="text-2xl font-bold text-primary">FancyFood</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-dark hover:text-primary font-medium">Home</a>
+                <a href="#featured" class="text-dark hover:text-primary font-medium">Featured</a>
+                <a href="#categories" class="text-dark hover:text-primary font-medium">Categories</a>
+                <a href="#testimonials" class="text-dark hover:text-primary font-medium">Testimonials</a>
+                <a href="#download" class="text-dark hover:text-primary font-medium">Download</a>
+            </div>
+            
+            <!-- Mobile Navigation Toggle -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-dark hover:text-primary focus:outline-none">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#home" class="text-dark hover:text-primary font-medium py-2">Home</a>
+                <a href="#featured" class="text-dark hover:text-primary font-medium py-2">Featured</a>
+                <a href="#categories" class="text-dark hover:text-primary font-medium py-2">Categories</a>
+                <a href="#testimonials" class="text-dark hover:text-primary font-medium py-2">Testimonials</a>
+                <a href="#download" class="text-dark hover:text-primary font-medium py-2">Download</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-16">
+        <div class="relative h-screen">
+            <!-- Slider Container -->
+            <div id="hero-slider" class="relative h-full overflow-hidden">
+                <!-- Slide 1 -->
+                <div class="slide absolute inset-0 transition-opacity duration-1000 opacity-100">
+                    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                    <img src="https://p3-doubao-search-sign.byteimg.com/labis/fbe6e1c6116db65ff5b06f12082d5d05~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=ygd0lzI3kFXwOEMV7igePgxQujw%3D" 
+                         alt="Delicious Steak" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center text-center px-4">
+                        <div data-aos="fade-up" data-aos-duration="1000">
+                            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow">LIGHT UP YOUR DAYS</h1>
+                            <p class="text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto text-shadow">
+                                Discover exquisite flavors and elevate your culinary experience with FancyFood
+                            </p>
+                            <button class="bg-secondary hover:bg-yellow-500 text-primary font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="slide absolute inset-0 transition-opacity duration-1000 opacity-0">
+                    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                    <img src="https://p26-doubao-search-sign.byteimg.com/labis/ff25ac4c595009fb437538b24dc5d4ab~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=z7WLT8F0Dl2x0A7fueDJ6gZu4dk%3D" 
+                         alt="Fresh Salad" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center text-center px-4">
+                        <div>
+                            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow">FRESH & HEALTHY</h1>
+                            <p class="text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto text-shadow">
+                                Nutritious meals prepared with the finest ingredients for a healthier lifestyle
+                            </p>
+                            <button class="bg-secondary hover:bg-yellow-500 text-primary font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                                Explore Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3 -->
+                <div class="slide absolute inset-0 transition-opacity duration-1000 opacity-0">
+                    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                    <img src="https://p26-doubao-search-sign.byteimg.com/labis/f32676ca9ffa8041f7e2c449adce8270~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=wKMsP17PiYGdo71GpI6ltVzVd80%3D" 
+                         alt="Decadent Dessert" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center text-center px-4">
+                        <div>
+                            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow">INDULGE YOUR SWEET TOOTH</h1>
+                            <p class="text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto text-shadow">
+                                Irresistible desserts that will satisfy your cravings and delight your taste buds
+                            </p>
+                            <button class="bg-secondary hover:bg-yellow-500 text-primary font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+                                View Desserts
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slider Controls -->
+                <div class="absolute bottom-8 left-0 right-0 flex justify-center space-x-3">
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-70 focus:outline-none active" data-index="0"></button>
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-70 focus:outline-none" data-index="1"></button>
+                    <button class="slider-dot w-3 h-3 rounded-full bg-white bg-opacity-70 focus:outline-none" data-index="2"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Dishes Section -->
+    <section id="featured" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">Featured Dishes</h2>
+                <p class="text-muted max-w-2xl mx-auto">
+                    Explore our most popular and highly recommended dishes prepared by our expert chefs
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dish Card 1 -->
+                <div class="bg-white rounded-lg overflow-hidden card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="100">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://p11-doubao-search-sign.byteimg.com/labis/54f69eee4ba890eec7d01504df390939~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=%2Bn41Nh8cqWjp01Kbf%2FMap38obBI%3D" 
+                             alt="Breakfast Platter" 
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        <div class="absolute top-4 right-4 bg-secondary text-primary text-sm font-bold py-1 px-3 rounded-full">
+                            Popular
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2">Breakfast Platter</h3>
+                        <p class="text-muted mb-4">
+                            A delicious combination of eggs, sausages, bacon, and fresh vegetables
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold text-xl">$12.99</span>
+                            <button class="bg-primary hover:bg-blue-800 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dish Card 2 -->
+                <div class="bg-white rounded-lg overflow-hidden card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="200">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://p26-doubao-search-sign.byteimg.com/mosaic-legacy/59360004c608e482f084~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=2hbe3cIDr3GSp9TsrN2rHVfKQJg%3D" 
+                             alt="Mexican Casserole" 
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        <div class="absolute top-4 right-4 bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-full">
+                            New
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2">Mexican Casserole</h3>
+                        <p class="text-muted mb-4">
+                            Layers of tortillas, cheese, beans, and savory sauce topped with fresh vegetables
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold text-xl">$15.99</span>
+                            <button class="bg-primary hover:bg-blue-800 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dish Card 3 -->
+                <div class="bg-white rounded-lg overflow-hidden card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="300">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://p3-doubao-search-sign.byteimg.com/labis/47993cbba25e4c17433c98e296967cce~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=aDwJetuxbOJhr8GzJg832fWwUw0%3D" 
+                             alt="Avocado Salad" 
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        <div class="absolute top-4 right-4 bg-red-500 text-white text-sm font-bold py-1 px-3 rounded-full">
+                            Healthy
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2">Avocado Salad</h3>
+                        <p class="text-muted mb-4">
+                            Fresh greens with creamy avocado, chickpeas, and a zesty lemon-tahini dressing
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold text-xl">$10.99</span>
+                            <button class="bg-primary hover:bg-blue-800 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-3 px-8 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                    View All Dishes
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">Explore Categories</h2>
+                <p class="text-muted max-w-2xl mx-auto">
+                    Browse through our diverse range of food categories to find your next favorite dish
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <!-- Category 1 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-cutlery text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">Breakfast</h3>
+                </div>
+                
+                <!-- Category 2 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="150">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-leaf text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">Salads</h3>
+                </div>
+                
+                <!-- Category 3 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-fire text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">Grills</h3>
+                </div>
+                
+                <!-- Category 4 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="250">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-birthday-cake text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">Desserts</h3>
+                </div>
+                
+                <!-- Category 5 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-coffee text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">Beverages</h3>
+                </div>
+                
+                <!-- Category 6 -->
+                <div class="bg-white rounded-lg p-6 text-center card-shadow transition-all duration-300 hover-scale" data-aos="fade-up" data-aos-delay="350">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-cutlery text-pink-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-primary">More</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">What Our Customers Say</h2>
+                <p class="text-muted max-w-2xl mx-auto">
+                    Read what our valued customers have to say about their dining experience with FancyFood
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white rounded-lg p-8 card-shadow" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-6">
+                        <div class="text-yellow-400 flex">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-muted">5.0</span>
+                    </div>
+                    <p class="text-muted mb-6 italic">
+                        "The food is absolutely delicious! I've tried several dishes and each one has been a culinary masterpiece. The delivery is always prompt and the packaging keeps the food fresh. Highly recommended!"
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah Johnson" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Sarah Johnson</h4>
+                            <p class="text-sm text-muted">Regular Customer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white rounded-lg p-8 card-shadow" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-6">
+                        <div class="text-yellow-400 flex">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-half-o"></i>
+                        </div>
+                        <span class="ml-2 text-muted">4.5</span>
+                    </div>
+                    <p class="text-muted mb-6 italic">
+                        "FancyFood has completely transformed my lunch breaks at work. The variety of healthy options is amazing, and I love how easy it is to customize my orders. The app is user-friendly and makes ordering a breeze."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Michael Thompson" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Michael Thompson</h4>
+                            <p class="text-sm text-muted">Office Worker</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white rounded-lg p-8 card-shadow" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex items-center mb-6">
+                        <div class="text-yellow-400 flex">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-muted">5.0</span>
+                    </div>
+                    <p class="text-muted mb-6 italic">
+                        "We ordered from FancyFood for our family gathering and everyone was impressed. The presentation was beautiful, and the taste was even better. It's now our go-to food delivery service for special occasions!"
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Emily Rodriguez" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Emily Rodriguez</h4>
+                            <p class="text-sm text-muted">Food Enthusiast</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="py-20 bg-primary text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0" data-aos="fade-right">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">Download Our App</h2>
+                    <p class="text-blue-100 mb-8 max-w-lg">
+                        Get the FancyFood app today and enjoy exclusive offers, quick reordering, and seamless delivery tracking. Available on both iOS and Android devices.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                            <i class="fa fa-apple text-2xl mr-3"></i>
+                            <div class="text-left">
+                                <div class="text-xs">Download on the</div>
+                                <div class="text-lg">App Store</div>
+                            </div>
+                        </button>
+                        <button class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                            <i class="fa fa-android text-2xl mr-3"></i>
+                            <div class="text-left">
+                                <div class="text-xs">Get it on</div>
+                                <div class="text-lg">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center" data-aos="fade-left">
+                    <div class="relative">
+                        <div class="absolute -top-4 -left-4 w-64 h-64 bg-secondary bg-opacity-20 rounded-full"></div>
+                        <div class="absolute -bottom-4 -right-4 w-64 h-64 bg-secondary bg-opacity-20 rounded-full"></div>
+                        <img src="https://p26-doubao-search-sign.byteimg.com/labis/8d6da8a48a0e56f32107bc28512fdaaa~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1791644276&x-signature=Qw9b62yeoSRaTYtfuaQamEZMOVI%3D" 
+                             alt="FancyFood App" 
+                             class="w-64 h-64 object-cover rounded-lg shadow-2xl relative z-10">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">FancyFood</h3>
+                    <p class="text-gray-400 mb-6">
+                        Elevate your culinary experience with our exquisite dishes prepared by expert chefs using the finest ingredients.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">
+                            <i class="fa fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors duration-300">Home</a></li>
+                        <li><a href="#featured" class="text-gray-400 hover:text-white transition-colors duration-300">Featured Dishes</a></li>
+                        <li><a href="#categories" class="text-gray-400 hover:text-white transition-colors duration-300">Categories</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-white transition-colors duration-300">Testimonials</a></li>
+                        <li><a href="#download" class="text-gray-400 hover:text-white transition-colors duration-300">Download App</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Contact Us</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-secondary mt-1 mr-3"></i>
+                            <span class="text-gray-400">123 Food Street, Culinary City, 10001</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-phone text-secondary mr-3"></i>
+                            <span class="text-gray-400">+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope text-secondary mr-3"></i>
+                            <span class="text-gray-400">info@fancyfood.com</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Subscribe</h4>
+                    <p class="text-gray-400 mb-4">
+                        Stay updated with our latest offers and new menu items
+                    </p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email address" class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-secondary w-full">
+                        <button type="submit" class="bg-secondary hover:bg-yellow-500 text-primary font-bold px-4 py-2 rounded-r-lg transition-colors duration-300 focus:outline-none">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                        &copy; 2025 FancyFood. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-300">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-300">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-300">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-secondary hover:bg-yellow-500 text-primary w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 invisible focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Initialize AOS Animation Library
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Close mobile menu when clicking on a link
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+            
+            // Hero Slider
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            let currentSlide = 0;
+            let slideInterval;
+            
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => {
+                    slide.style.opacity = '0';
+                });
+                
+                // Remove active class from all dots
+                dots.forEach(dot => {
+                    dot.classList.remove('active');
+                    dot.classList.add('bg-opacity-70');
+                    dot.classList.remove('bg-opacity-100');
+                });
+                
+                // Show current slide
+                slides[index].style.opacity = '1';
+                
+                // Activate current dot
+                dots[index].classList.add('active');
+                dots[index].classList.remove('bg-opacity-70');
+                dots[index].classList.add('bg-opacity-100');
+                
+                // Update current slide index
+                currentSlide = index;
+            }
+            
+            function nextSlide() {
+                let next = currentSlide + 1;
+                if (next >= slides.length) {
+                    next = 0;
+                }
+                showSlide(next);
+            }
+            
+            // Start slide show
+            function startSlideShow() {
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+            
+            // Stop slide show
+            function stopSlideShow() {
+                clearInterval(slideInterval);
+            }
+            
+            // Click on dots to navigate slides
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const slideIndex = parseInt(this.getAttribute('data-index'));
+                    showSlide(slideIndex);
+                    stopSlideShow();
+                    startSlideShow();
+                });
+            });
+            
+            // Start the slide show
+            startSlideShow();
+            
+            // Back to Top Button
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Adjust for navbar height
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Add to Cart Button Functionality
+            const addToCartButtons = document.querySelectorAll('.bg-primary.hover\\:bg-blue-800');
+            
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const dishName = this.closest('.bg-white').querySelector('h3').textContent;
+                    
+                    // Create a notification element
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-y-10 opacity-0';
+                    notification.textContent = dishName + ' has been added to your cart!';
+                    document.body.appendChild(notification);
+                    
+                    // Show notification
+                    setTimeout(() => {
+                        notification.classList.remove('translate-y-10', 'opacity-0');
+                    }, 10);
+                    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.add('translate-y-10', 'opacity-0');
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 300);
+                    }, 3000);
+                });
+            });
+            
+            // Newsletter Form Submission
+            const newsletterForm = document.querySelector('footer form');
+            
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const emailInput = this.querySelector('input[type="email"]');
+                const email = emailInput.value.trim();
+                
+                if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    // Create a notification element
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-y-10 opacity-0';
+                    notification.textContent = 'Thank you for subscribing!';
+                    document.body.appendChild(notification);
+                    
+                    // Show notification
+                    setTimeout(() => {
+                        notification.classList.remove('translate-y-10', 'opacity-0');
+                    }, 10);
+                    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.add('translate-y-10', 'opacity-0');
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 300);
+                    }, 3000);
+                    
+                    // Clear the input field
+                    emailInput.value = '';
+                } else {
+                    // Create an error notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-y-10 opacity-0';
+                    notification.textContent = 'Please enter a valid email address.';
+                    document.body.appendChild(notification);
+                    
+                    // Show notification
+                    setTimeout(() => {
+                        notification.classList.remove('translate-y-10', 'opacity-0');
+                    }, 10);
+                    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.add('translate-y-10', 'opacity-0');
+                        setTimeout(() => {
+                            document.body.removeChild(notification);
+                        }, 300);
+                    }, 3000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>`;
 export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(修正请求URL(request.url));
@@ -51,6 +799,7 @@ export default {
 			if (!管理员密码) return fetch(Pages静态页面 + '/noADMIN').then(r => { const headers = new Headers(r.headers); headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate'); headers.set('Pragma', 'no-cache'); headers.set('Expires', '0'); return new Response(r.body, { status: 404, statusText: r.statusText, headers }) });
 			if (env.KV && typeof env.KV.get === 'function') {
 				const 区分大小写访问路径 = url.pathname.slice(1);
+				if (url.pathname === '/') return new Response(首页HTML, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 				if (区分大小写访问路径 === 加密秘钥 && 加密秘钥 !== '勿动此默认密钥，有需求请自行通过添加变量KEY进行修改') {//快速订阅
 					const params = new URLSearchParams(url.search);
 					params.set('token', await MD5MD5(host + userID));
